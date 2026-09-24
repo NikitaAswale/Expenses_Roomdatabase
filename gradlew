@@ -118,6 +118,12 @@ CLASSPATH="\\\"\\\""
 
 
 # Determine the Java command to use to start the JVM.
+if [ -z "$JAVA_HOME" ] ; then
+    if [ -d "/Applications/Android Studio.app/Contents/jbr/Contents/Home" ] ; then
+        JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+    fi
+fi
+
 if [ -n "$JAVA_HOME" ] ; then
     if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
         # IBM's JDK on AIX uses strange locations for the executables

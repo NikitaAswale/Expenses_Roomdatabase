@@ -1,7 +1,6 @@
 package com.example.expenses_roomdatabase
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -25,21 +24,30 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.w3c.dom.Text
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 
 @Composable
-fun AddExpense() {
+fun AddExpense(navController: NavHostController, viewModel: Expenses_ViewModel = hiltViewModel()) {
+
+    val expenses by viewModel.expenses.collectAsStateWithLifecycle()
+
+    var title by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -166,10 +174,11 @@ fun AddExpense() {
                 Spacer(Modifier.height(2.dp))
 
                 OutlinedTextField(
-                    value = "", onValueChange = {},
+                    value = title,
+                    onValueChange = {title = it},
                     label = {
                         Text(
-                            "Morning Coffee",
+                            "",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.Black
@@ -197,10 +206,11 @@ fun AddExpense() {
                 Spacer(Modifier.height(2.dp))
 
                 OutlinedTextField(
-                    value = "", onValueChange = {},
+                    value = amount,
+                    onValueChange = {amount = it},
                     label = {
                         Text(
-                            "4.50",
+                            "",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.Black
@@ -250,7 +260,13 @@ fun AddExpense() {
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
-            onClick = {},
+            onClick = {
+                val amountInt = amount.toIntOrNull() ?: 0
+                if (title.isNotBlank()) {
+                    viewModel.addExpenses(title, amountInt)
+                    navController.navigate("Screen2")
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
@@ -275,7 +291,9 @@ fun AddExpense() {
         }
 
         Button(
-            onClick = {},
+            onClick = {
+                navController.navigate("Screen2")
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
